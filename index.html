@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Breathe With Me 🌬️</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    .page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(6px);
+      background-color: rgba(0, 0, 0, 0.5);
+      transition: opacity 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 18px;
+      max-width: 600px;
+      text-align: center;
+      opacity: 0.8;
+      margin-bottom: 30px;
+    }
+
+    .start-btn, .stop-btn {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #333;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .start-btn:hover, .stop-btn:hover {
+      background-color: #fff;
+    }
+
+    .container {
+      display: none;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .circle-container {
+      margin: 30px 0;
+    }
+
+    .circle {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      transition: transform 3s ease-in-out;
+    }
+
+    .grow {
+      transform: scale(1.5);
+    }
+
+    #text {
+      font-size: 22px;
+      margin-top: 20px;
+      font-weight: 500;
+    }
+
+    .controls {
+      margin-top: 20px;
+    }
+
+    select {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+      background-color: rgba(255,255,255,0.9);
+      color: #333;
+    }
+
+    .quote {
+      margin-top: 25px;
+      font-size: 15px;
+      font-style: italic;
+      opacity: 0.85;
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 13px;
+      opacity: 0.65;
+    }
+
+    #durationDisplay {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ccc;
+      opacity: 0.8;
+    }
+
+    .stop-btn {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Front Page -->
+  <div id="frontPage" class="page">
+    <h1>Breathe With Me 🌬️</h1>
+    <p>Welcome to your personal calm space by Radhika Chhangani. Ready to pause, breathe, and return to the moment?</p>
+    <button class="start-btn" onclick="startExperience()">Start Breathing</button>
+    <div id="durationDisplay"></div>
+  </div>
+
+  <!-- Breathing Page -->
+  <div class="container" id="breathingApp">
+    <h1>Breathe With Me 🌬️</h1>
+
+    <div class="circle-container">
+      <div class="circle" id="circle"></div>
+      <p id="text">Get Ready...</p>
+    </div>
+
+    <div class="controls">
+      <label for="speed">Speed:</label>
+      <select id="speed">
+        <option value="normal" selected>Normal</option>
+        <option value="calm">Deep Calm</option>
+        <option value="fast">Focus</option>
+      </select>
+    </div>
+
+    <div class="quote">“Feel your breath. Be in the moment.” 🌿</div>
+    <footer>"Feel your breath. Return to now." — Your Calm Companion 🧘‍♀️ <br> BY RADHIKA CHHANGANI</footer><br> <br>
+    <button class="stop-btn" onclick="stopAndReturn()">⏹ Stop & Return</button>
+  </div>
+
+  <script>
+    const text = document.getElementById('text');
+    const circle = document.getElementById('circle');
+    const speedSelect = document.getElementById('speed');
+    const frontPage = document.getElementById('frontPage');
+    const breathingApp = document.getElementById('breathingApp');
+    const durationDisplay = document.getElementById('durationDisplay');
+
+    let breatheTime = 4000;
+    let breatheTimeout;
+    let startTime;
+
+    function startExperience() {
+      // Clear previous duration text
+      durationDisplay.innerText = '';
+
+      frontPage.classList.add('hidden');
+      setTimeout(() => {
+        frontPage.style.display = 'none';
+        breathingApp.style.display = 'block';
+        startTime = new Date(); // start timer
+        startBreathing();
+      }, 500);
+    }
+
+    function startBreathing() {
+      text.innerText = 'Breathe In';
+      circle.classList.add('grow');
+
+      breatheTimeout = setTimeout(() => {
+        text.innerText = 'Hold...';
+
+        setTimeout(() => {
+          text.innerText = 'Breathe Out';
+          circle.classList.remove('grow');
+
+          setTimeout(startBreathing, breatheTime);
+        }, breatheTime / 2);
+      }, breatheTime);
+    }
+
+    function stopAndReturn() {
+      clearTimeout(breatheTimeout);
+      circle.classList.remove('grow');
+
+      const endTime = new Date();
+      const seconds = Math.floor((endTime - startTime) / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+
+      const durationText = `You breathed for ${minutes > 0 ? `${minutes} min ` : ''}${remainingSeconds} sec.`;
+      durationDisplay.innerText = durationText;
+
+      // Transition back
+      breathingApp.style.display = 'none';
+      frontPage.style.display = 'flex';
+      frontPage.classList.remove('hidden');
+    }
+
+    function resetBreathing() {
+      clearTimeout(breatheTimeout);
+      circle.classList.remove('grow');
+      startBreathing();
+    }
+
+    speedSelect.addEventListener('change', () => {
+      const speed = speedSelect.value;
+      if (speed === 'calm') breatheTime = 6000;
+      else if (speed === 'fast') breatheTime = 2500;
+      else breatheTime = 4000;
+
+      resetBreathing();
+    });
+  </script>
+</body>
+</html>
